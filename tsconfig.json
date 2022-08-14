@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ES2017",                                    /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
+    "module": "es6",   
+    "moduleResolution": "node",                          /* Specify what module code is generated. */
+    "strict": true,                                     /* Enable all strict type-checking options. */                      /* Skip type checking .d.ts files that are included with TypeScript. */
+    "strictPropertyInitialization": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "skipLibCheck": true,                             /* Skip type checking all .d.ts files. */
+    "rootDir": "./src",                               /* Specify the root folder within your source files. */
+    "outDir": "./dist"
+   }
+}
