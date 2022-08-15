@@ -36,9 +36,24 @@ class ContatoPaginaCadastro implements IPaginaHTML, IPaginaFormulario {
       this.txtEmpresa.value,
       this.txtCargo.value );
 
-      this.repositorioContatos.inserir(contato);
+      if(this.IsEmail(contato.email) && this.IsFone(contato.telefone) ){
+        this.repositorioContatos.inserir(contato);
+        window.location.href = "contato.list.html"
+      }else{
+        console.log("Email ou telefone está inválidos");
 
-      window.location.href = "contato.list.html"
+      }
+
+  }
+
+  private IsFone(numero: string) {
+    var regex = new RegExp('^\\([0-9]{2}\\)((3[0-9]{3}-[0-9]{4})|(9[0-9]{3}-[0-9]{5}))$');
+    return regex.test(numero);
+  }
+
+  private IsEmail(email: string){
+    var emailPattern =  /^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/;
+    return emailPattern.test(email); 
   }
 }
 new ContatoPaginaCadastro(new ContatoRepositoryLocalStorage());

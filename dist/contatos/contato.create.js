@@ -16,8 +16,21 @@ class ContatoPaginaCadastro {
     }
     gravarRegistro() {
         const contato = new Contato(this.txtNome.value, this.txtEmail.value, this.txtTelefone.value, this.txtEmpresa.value, this.txtCargo.value);
-        this.repositorioContatos.inserir(contato);
-        window.location.href = "contato.list.html";
+        if (this.IsFone(contato.telefone)) {
+            this.repositorioContatos.inserir(contato);
+            window.location.href = "contato.list.html";
+        }
+        else {
+            console.log("Email ou telefone está inválidos");
+        }
+    }
+    IsFone(numero) {
+        var regex = new RegExp('^\\([0-9]{2}\\)((9[0-9]{4}-[0-9]{4}))$');
+        return regex.test(numero);
+    }
+    IsEmail(email) {
+        var emailPattern = /^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/;
+        return emailPattern.test(email);
     }
 }
 new ContatoPaginaCadastro(new ContatoRepositoryLocalStorage());
