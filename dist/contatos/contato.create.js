@@ -16,7 +16,7 @@ class ContatoPaginaCadastro {
     }
     gravarRegistro() {
         const contato = new Contato(this.txtNome.value, this.txtEmail.value, this.txtTelefone.value, this.txtEmpresa.value, this.txtCargo.value);
-        if (this.IsFone(contato.telefone)) {
+        if (this.IsEmail(contato.email) && this.IsFone(contato.telefone)) {
             this.repositorioContatos.inserir(contato);
             window.location.href = "contato.list.html";
         }
@@ -25,7 +25,7 @@ class ContatoPaginaCadastro {
         }
     }
     IsFone(numero) {
-        var regex = new RegExp('^\\([0-9]{2}\\)((9[0-9]{4}-[0-9]{4}))$');
+        var regex = new RegExp('^\\([0-9]{2}\\)((3[0-9]{3}-[0-9]{4})|(9[0-9]{3}-[0-9]{5}))$');
         return regex.test(numero);
     }
     IsEmail(email) {

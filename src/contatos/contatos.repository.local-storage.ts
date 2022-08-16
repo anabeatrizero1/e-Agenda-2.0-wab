@@ -1,3 +1,4 @@
+import { Guid } from "../shared/guid.model.js";
 import { IRepositorioSerializavel } from "../shared/repositorio-serializavel.interface.js";
 import { IRepositorio } from "../shared/repositorio.inerface.js";
 import { Contato } from "./contato.model.js";
@@ -12,6 +13,7 @@ export class ContatoRepositoryLocalStorage implements IRepositorio<Contato>, IRe
 
     this.contatos = this.selecionarTodos();
   }
+  
   public gravar(): void {
     const contatosJsonString = JSON.stringify(this.contatos);
 
@@ -28,5 +30,9 @@ export class ContatoRepositoryLocalStorage implements IRepositorio<Contato>, IRe
       return [];
 
     return JSON.parse(dados);
+  }
+
+  selecionarPorId(id: string): Contato | undefined {
+    return this.contatos.find(x => x.id === id);
   }
 }

@@ -17,4 +17,7 @@ export class ContatoRepositoryLocalStorage {
             return [];
         return JSON.parse(dados);
     }
+    selecionarPorId(id) {
+        return this.contatos.find(x => x.id === id);
+    }
 }
