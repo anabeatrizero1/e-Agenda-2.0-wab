@@ -20,7 +20,7 @@ class TarefaPaginaListagem {
             const celulaBotoes = novaLinha.insertCell();
             const btnEditar = document.createElement("a");
             btnEditar.innerText = "Editar";
-            btnEditar.className = "btn btn-primary me-1";
+            btnEditar.className = "btn btn-warning me-1";
             btnEditar.addEventListener("click", () => {
                 const idSelecionado = tarefa.id;
                 window.location.href = `tarefa.create.html?id=${idSelecionado}`;

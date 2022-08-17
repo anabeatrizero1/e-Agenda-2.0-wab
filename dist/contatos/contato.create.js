@@ -1,9 +1,23 @@
 import { Contato } from "./contato.model.js";
 import { ContatoRepositoryLocalStorage } from "./contatos.repository.local-storage.js";
 class ContatoPaginaCadastro {
-    constructor(repositorioContatos) {
+    constructor(repositorioContatos, id) {
         this.repositorioContatos = repositorioContatos;
         this.configurarElementos();
+        if (id) {
+            this.idSelecionado = id;
+            const contatoSelecionado = this.repositorioContatos.selecionarPorId(id);
+            if (contatoSelecionado) {
+                this.preencherFormulario(contatoSelecionado);
+            }
+        }
+    }
+    preencherFormulario(contatoSelecionado) {
+        this.txtNome.value = contatoSelecionado.nome;
+        this.txtEmail.value = contatoSelecionado.email;
+        this.txtTelefone.value = contatoSelecionado.telefone;
+        this.txtEmpresa.value = contatoSelecionado.empresa;
+        this.txtCargo.value = contatoSelecionado.cargo;
     }
     configurarElementos() {
         this.txtNome = document.getElementById("txtNome");
@@ -15,14 +29,25 @@ class ContatoPaginaCadastro {
         this.btnSalvar.addEventListener("click", (_evt) => this.gravarRegistro());
     }
     gravarRegistro() {
-        const contato = new Contato(this.txtNome.value, this.txtEmail.value, this.txtTelefone.value, this.txtEmpresa.value, this.txtCargo.value);
-        if (this.IsEmail(contato.email) && this.IsFone(contato.telefone)) {
+        const contato = this.obterDadosFormularario();
+        if (!this.idSelecionado)
             this.repositorioContatos.inserir(contato);
-            window.location.href = "contato.list.html";
-        }
-        else {
-            console.log("Email ou telefone está inválidos");
-        }
+        else
+            this.repositorioContatos.editar(contato.id, contato);
+        window.location.href = "contato.list.html";
+    }
+    obterDadosFormularario() {
+        const nome = this.txtNome.value;
+        const email = this.txtEmail.value;
+        const telefone = this.txtTelefone.value;
+        const empresa = this.txtEmpresa.value;
+        const cargo = this.txtCargo.value;
+        let contato = null;
+        if (!this.idSelecionado)
+            contato = new Contato(nome, email, telefone, empresa, cargo);
+        else
+            contato = new Contato(nome, email, telefone, empresa, cargo, this.idSelecionado);
+        return contato;
     }
     IsFone(numero) {
         var regex = new RegExp('^\\([0-9]{2}\\)((3[0-9]{3}-[0-9]{4})|(9[0-9]{3}-[0-9]{5}))$');
@@ -33,4 +58,13 @@ class ContatoPaginaCadastro {
         return emailPattern.test(email);
     }
 }
-new ContatoPaginaCadastro(new ContatoRepositoryLocalStorage());
+const parametros = new URLSearchParams(window.location.search);
+const id = parametros.get("id");
+new ContatoPaginaCadastro(new ContatoRepositoryLocalStorage(), id);
+// function verificarRegistro(contato: Contato): boolean {
+//   if (this.IsEmail(contato.email) && this.IsFone(contato.telefone)) {
+//     return true;   
+//   }else{
+//     return false;
+//   }
+// }

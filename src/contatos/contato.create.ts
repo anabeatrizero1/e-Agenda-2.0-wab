@@ -47,17 +47,14 @@ class ContatoPaginaCadastro implements IPaginaHTML, IPaginaFormulario {
 
   }
   gravarRegistro(): void {
-
     const contato = this.obterDadosFormularario();
 
-    if(verificarRegistro(contato)){
       if(!this.idSelecionado)
         this.repositorioContatos.inserir(contato);
       else
         this.repositorioContatos.editar(contato.id, contato);
-    
+        
       window.location.href = "contato.list.html";
-    }
   }
   obterDadosFormularario() {
     const nome = this.txtNome.value;
@@ -93,10 +90,10 @@ const id = parametros.get("id") as (string);
 
 new ContatoPaginaCadastro(new ContatoRepositoryLocalStorage(), id);
 
-function verificarRegistro(contato: Contato): boolean {
-  if (this.IsEmail(contato.email) && this.IsFone(contato.telefone)) {
-    return true;   
-  }else{
-    return false;
-  }
-}
+// function verificarRegistro(contato: Contato): boolean {
+//   if (this.IsEmail(contato.email) && this.IsFone(contato.telefone)) {
+//     return true;   
+//   }else{
+//     return false;
+//   }
+// }
