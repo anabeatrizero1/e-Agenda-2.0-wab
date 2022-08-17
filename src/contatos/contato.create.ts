@@ -6,16 +6,35 @@ import { ContatoRepositoryLocalStorage } from "./contatos.repository.local-stora
 
 class ContatoPaginaCadastro implements IPaginaHTML, IPaginaFormulario {
   private txtNome: HTMLInputElement;
-  private txtEmail: HTMLInputElement; 
-  private txtTelefone: HTMLInputElement; 
-  private txtEmpresa: HTMLInputElement; 
-  private txtCargo: HTMLInputElement; 
+  private txtEmail: HTMLInputElement;
+  private txtTelefone: HTMLInputElement;
+  private txtEmpresa: HTMLInputElement;
+  private txtCargo: HTMLInputElement;
   private btnSalvar: HTMLButtonElement;
 
-  constructor(private repositorioContatos: IRepositorio<Contato>){
+  private idSelecionado: string;
+
+  constructor(private repositorioContatos: IRepositorio<Contato>, id?: string) {
     this.configurarElementos();
+
+    if (id) {
+      this.idSelecionado = id;
+
+      const contatoSelecionado = this.repositorioContatos.selecionarPorId(id);
+
+      if (contatoSelecionado) {
+        this.preencherFormulario(contatoSelecionado);
+      }
+    }
   }
-  
+  preencherFormulario(contatoSelecionado: Contato) {
+    this.txtNome.value = contatoSelecionado.nome;
+    this.txtEmail.value = contatoSelecionado.email;
+    this.txtTelefone.value = contatoSelecionado.telefone;
+    this.txtEmpresa.value = contatoSelecionado.empresa;
+    this.txtCargo.value = contatoSelecionado.cargo;
+  }
+
   configurarElementos(): void {
     this.txtNome = document.getElementById("txtNome") as HTMLInputElement;
     this.txtEmail = document.getElementById("txtEmail") as HTMLInputElement;
@@ -25,24 +44,36 @@ class ContatoPaginaCadastro implements IPaginaHTML, IPaginaFormulario {
     this.btnSalvar = document.getElementById("btnSalvar") as HTMLButtonElement;
 
     this.btnSalvar.addEventListener("click", (_evt: any) => this.gravarRegistro());
-    
 
   }
   gravarRegistro(): void {
-    const contato = new Contato
-    ( this.txtNome.value, 
-      this.txtEmail.value,
-      this.txtTelefone.value,
-      this.txtEmpresa.value,
-      this.txtCargo.value );
 
-      if(this.IsEmail(contato.email) && this.IsFone(contato.telefone) ){
+    const contato = this.obterDadosFormularario();
+
+    if(verificarRegistro(contato)){
+      if(!this.idSelecionado)
         this.repositorioContatos.inserir(contato);
-        window.location.href = "contato.list.html"
-      }else{
-        console.log("Email ou telefone está inválidos");
+      else
+        this.repositorioContatos.editar(contato.id, contato);
+    
+      window.location.href = "contato.list.html";
+    }
+  }
+  obterDadosFormularario() {
+    const nome = this.txtNome.value;
+    const email = this.txtEmail.value;
+    const telefone = this.txtTelefone.value;
+    const empresa = this.txtEmpresa.value;
+    const cargo = this.txtCargo.value;
 
-      }
+    let contato = null;
+
+    if (!this.idSelecionado)
+      contato = new Contato(nome, email, telefone, empresa, cargo);
+    else
+      contato = new Contato(nome, email, telefone, empresa, cargo, this.idSelecionado);
+
+    return contato;
 
   }
 
@@ -51,9 +82,21 @@ class ContatoPaginaCadastro implements IPaginaHTML, IPaginaFormulario {
     return regex.test(numero);
   }
 
-  private IsEmail(email: string){
-    var emailPattern =  /^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/;
-    return emailPattern.test(email); 
+  private IsEmail(email: string) {
+    var emailPattern = /^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/;
+    return emailPattern.test(email);
   }
 }
-new ContatoPaginaCadastro(new ContatoRepositoryLocalStorage());
+const parametros = new URLSearchParams(window.location.search);
+
+const id = parametros.get("id") as (string);
+
+new ContatoPaginaCadastro(new ContatoRepositoryLocalStorage(), id);
+
+function verificarRegistro(contato: Contato): boolean {
+  if (this.IsEmail(contato.email) && this.IsFone(contato.telefone)) {
+    return true;   
+  }else{
+    return false;
+  }
+}
